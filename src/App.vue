@@ -5,6 +5,11 @@
         <v-rect :config="configRect"></v-rect>
         <v-circle :config="configCircle" ref="boll"></v-circle>
         <v-rect :config="padle" ref="padle"></v-rect>
+        <v-rect 
+          v-for="item in items"
+          :key="item"
+          :config="item"
+        ></v-rect>
       </v-layer>
     </v-stage>
   </div>
@@ -15,7 +20,9 @@ export default {
   data () {
     return {
       getPadleX: null,
-      getPadleXY: null,
+      rects: [
+        {id: 1}
+      ],
       configKonva: {
         width: 800,
         height: 600
@@ -24,18 +31,14 @@ export default {
         x: 100,
         y: 100,
         radius: 5,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 4
+        fill: 'white',
       },
       configRect: {
         x: 0,
         y: 0,
         width: 800,
         height: 600,
-        fill: 'pink',
-        stroke: 'black',
-        strokeWidth: 1
+        fill: 'black',
       },
       padle: {
         x: 200,
@@ -49,6 +52,31 @@ export default {
   methods: {
     padleMuve (event) {
       this.getPadleX = event.clientX
+    }
+  },
+  computed: {
+    items (i = 20) {
+      let y = 50
+      let x = 0
+      let height = 20
+      let items = []
+      if (i % 7 === 0) y += height + 10
+      for(let j = 0; j < 20; j++) {
+        x += j * 110 - 100
+        if (j % 6 === 0) {
+          y += height + 10
+          x = 0
+        }
+        items.push({
+          x,
+          y,
+          width: 100,
+          height,
+          fill: 'blue'
+        })
+      }
+      console.log(items)
+      return items
     }
   },
   name: 'App',
