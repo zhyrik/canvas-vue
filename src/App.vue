@@ -38,23 +38,21 @@ export default {
   },
   name: 'App',
   mounted () {
-    const vm = this;
-    const amplitude = 300;
-    const period = 5000;
+    const vm = this
     let c = 150
     let i = 1
     // in ms
-    const centerX = this.$refs.stage.getStage().getWidth() / 2;
+    const centerX = this.$refs.stage.getStage().getWidth() / 2
     console.log(centerX)
     console.log(this.$refs.hexagon)
 
     const anim = new Konva.Animation(function (frame) {
-        if (c > 400) {i *= -1}
-        c = (c + 3) * i
-        vm.$refs.hexagon.getStage().setX(c);
-    }, vm.$refs.layer.getStage());
+      if (c > 400) { i *= -1 }
+      c = (c + 3) * i
+      vm.$refs.hexagon.getStage().setX(c)
+    }, vm.$refs.layer.getStage())
 
-    anim.start();
+    anim.start()
   }
 }
 </script>
