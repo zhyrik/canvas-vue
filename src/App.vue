@@ -1,6 +1,6 @@
 <template>
   <div id="app" @mousemove="padleMuve">
-    <v-stage :config="{width: canvas.width, height: canvas.height}" ref="stage" >
+    <v-stage :config="{width: canvas.width, height: canvas.height}" ref="stage" class="center">
       <v-layer ref="layer">
 
         <v-rect
@@ -15,15 +15,24 @@
 
         <v-circle
           :config="{
-            x: 100,
-            y: 100,
+            x: 250,
+            y: 250,
             radius: 5,
             fill: 'white'
           }"
           ref="boll"
         ></v-circle>
 
-        <v-rect :config="congigPadle" ref="padle"></v-rect>
+        <v-rect
+          :config="{
+            x: 200,
+            y: 550,
+            width: 100,
+            height: 10,
+            fill: 'white'
+          }"
+          ref="padle"
+        ></v-rect>
 
         <v-rect
           v-for="(item, index) in bricks"
@@ -41,47 +50,39 @@
 export default {
   data () {
     return {
-      getPadleX: null,
+      clientX: null,
       canvas: {
-        width: 1000,
+        width: 1022,
         height: 600
       },
       brick: {
         width: 100,
         height: 20,
-        gap: 5,
+        gap: 2,
         fill: 'blue',
-        number: 35
+        number: 76
       },
       bricks: [],
-      configCircle: {
-        x: 100,
-        y: 100,
-        radius: 5,
-        fill: 'white'
-      },
-      congigPadle: {
-        x: 200,
-        y: 550,
-        width: 100,
-        height: 10,
-        fill: 'white'
-      }
+      gameOver: false
     }
   },
   methods: {
     padleMuve (event) {
-      this.getPadleX = event.clientX
+      this.clientX = event.clientX
+    },
+    newGame () {
+      console.log(1)
+      this.start()
+      console.log(2)
     }
   },
   name: 'App',
   mounted () {
     // https://github.com/konvajs/vue-konva/blob/master/docs/events.md
-    const vm = this
 
     const boll = this.$refs.boll.getStage()
-    let bollX = 150
-    let bollY = 150
+    let bollX = 250
+    let bollY = 250
     let bollSpeadX = 3
     let bollSpeadY = 4
     let bollSaveX = null
@@ -96,50 +97,63 @@ export default {
     // in ms
     // const centerX = this.$refs.stage.getStage().getWidth() / 2
     const anim = new Konva.Animation((frame) => {
-
       const bollGetX = boll.getX()
       const bollGetY = boll.getY()
       const padleGetX = padle.getX()
       const padleGetY = padle.getY()
+
+      // game over
+      if (bollGetY > padleGetY + 20) {
+        this.gameOver = true
+        return
+      }
+
       // padle logic
-      if (this.getPadleX > this.canvas.width) this.getPadleX = this.canvas.width
-      padle.setX(this.getPadleX - padleWidth / 2)
-      if (bollGetX >= this.getPadleX - padleWidth / 2 && bollGetX <= this.getPadleX + padleWidth / 2) {
+      if (this.clientX > this.canvas.width) this.clientX = this.canvas.width
+      padle.setX(this.clientX - padleWidth / 2)
+      if (bollGetX >= this.clientX - padleWidth / 2 && bollGetX <= this.clientX + padleWidth / 2) {
         if (bollGetY + bollRadius >= padleGetY && bollGetY + bollRadius <= padleGetY + bollSpeadY + 1) {
-          bollSpeadX = (padleGetX + padleWidth / 2 - bollGetX) * 0.2 + 0.5
+          bollSpeadX = (padleGetX + padleWidth / 2 - bollGetX) * 0.2 + 0.1
           if (bollSpeadX < 0) bollSpeadX *= -1
           vertical = -1
         }
       }
 
       // boll logic
-      if (bollGetX + bollRadius > this.canvas.width || bollGetX - bollRadius < 0) horizontal *= -1
-      if (bollGetY + bollRadius > this.canvas.height || bollGetY - bollRadius < 0) vertical *= -1
+      if (bollGetX + bollRadius >= this.canvas.width || bollGetX - bollRadius <= 0) horizontal *= -1
+      if (bollGetY + bollRadius >= this.canvas.height || bollGetY - bollRadius <= 0) vertical *= -1
       bollX = bollX + horizontal * bollSpeadX
       bollY = bollY + vertical * bollSpeadY
       boll.setX(bollX)
       boll.setY(bollY)
 
-      //brick
+      // brick logic
       if (this.$refs.bricks) {
         for (let i = 0; i <= this.$refs.bricks.length; i++) {
           let brick = null
           if (this.$refs.bricks[i]) {
             brick = this.$refs.bricks[i].getStage()
-            if (brick.getX() <= bollGetX && brick.getX() + brick.getWidth() > bollGetX) {
-              if (bollGetY >= brick.getY() && bollGetY <= brick.getY() + brick.getHeight()) {
+            const brickGetX = brick.getX()
+            const brickGetY = brick.getY()
+            const brickGetWidth = brick.getWidth()
+            const brickGetHeight = brick.getHeight()
+            if (brickGetX <= bollGetX && brickGetX + brickGetWidth > bollGetX) {
+              if (bollGetY >= brickGetY && bollGetY <= brickGetY + brickGetHeight) {
+                debugger
                 this.bricks.splice(i, 1)
-                if (bollSaveX < brick.getX() || bollSaveX > brick.getX() + brick.getWidth()) horizontal *= -1
-                if (bollSaveY < brick.getY() || bollSaveY > brick.getY() + brick.getHeight()) vertical *= -1
+                if (bollSaveX < brickGetX || bollSaveX > brickGetX + brickGetWidth) horizontal *= -1
+                if (bollSaveY < brickGetY || bollSaveY > brickGetY + brickGetHeight) vertical *= -1
               }
             }
           }
         }
       }
 
+      // save cordinate boll
       bollSaveX = bollGetX
       bollSaveY = bollGetY
-    }, this.$refs.layer.getStage())
+    },
+    this.$refs.layer.getStage())
 
     const drawBrick = () => {
       let posX = this.brick.gap
@@ -166,5 +180,8 @@ export default {
 </script>
 
 <style>
-
+.center{
+  display: flex;
+  justify-content: center;
+}
 </style>
