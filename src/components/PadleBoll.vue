@@ -103,6 +103,7 @@ export default {
       const bollGetY = boll.getY()
       const padleGetX = padle.getX()
       const padleGetY = padle.getY()
+      let padlePosition = this.clientX - this.$refs.stage._stage.content.offsetLeft
 
       // game over
       if (bollGetY > padleGetY + 20) {
@@ -117,9 +118,9 @@ export default {
       }
 
       // padle logic
-      if (this.clientX > this.canvas.width) this.clientX = this.canvas.width
-      padle.setX(this.clientX - padleWidth / 2)
-      if (bollGetX >= this.clientX - padleWidth / 2 && bollGetX <= this.clientX + padleWidth / 2) {
+      if (padlePosition > this.canvas.width) padlePosition = this.canvas.width
+      padle.setX(padlePosition - padleWidth / 2)
+      if (bollGetX >= padlePosition - padleWidth / 2 && bollGetX <= padlePosition + padleWidth / 2) {
         if (bollGetY + bollRadius >= padleGetY && bollGetY + bollRadius <= padleGetY + bollSpeadY + 1) {
           bollSpeadX = (padleGetX + padleWidth / 2 - bollGetX) * 0.1 * this.level + 0.1
           if (bollSpeadX < 0) bollSpeadX *= -1
