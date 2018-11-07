@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @mousemove="padleMuve">
+  <div id="app">
     <router-view></router-view>
   </div>
 </template>

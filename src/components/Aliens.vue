@@ -107,8 +107,7 @@ export default {
         shut.setY(shutY)
       }
 
-    },
-    this.$refs.layer.getStage())
+    }, this.$refs.layer.getStage())
 
     const drawAlian = () => {
       let posX = 150
@@ -128,9 +127,8 @@ export default {
       }
     }
 
-      drawAlian()
-      anim.start()
-    
+    drawAlian()
+    anim.start()
   }
 }
 </script>

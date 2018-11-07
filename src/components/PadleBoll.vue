@@ -1,5 +1,5 @@
 <template>
-  <div @mousemove="padleMuve">
+  <div @mousemove="muveMouse">
     <pre class="text">level {{level}}       Point {{point}}      <span @click="newGame" >start</span></pre>
     <v-stage :config="{width: canvas.width, height: canvas.height}" ref="stage" class="center">
       <v-layer ref="layer">
@@ -72,7 +72,7 @@ export default {
     }
   },
   methods: {
-    padleMuve (event) {
+    muveMouse (event) {
       this.clientX = event.clientX
     },
     newGame () {
@@ -182,8 +182,8 @@ export default {
       }
     }
 
-    this.start = (i=1) => {
-      this.level === 1 ? this.point = 0: null
+    this.start = (i = 1) => {
+      this.level === 1 ? this.point = 0 : null
       bollY = 250
       bollSpeadX = 1
       this.level = i
